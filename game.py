@@ -5,12 +5,15 @@ from random import randint
 
 black = (0,0,0)
 white = (255,255,255)
+blue = (0, 0, 255)
+yellow = (255, 255, 0)
 red = (200,0,0)
 green = (0, 200, 0)
 
 
 bright_red = (255,0,0)
 bright_green = (0, 255, 0)
+
 
 SCREEN_WIDTH = 956
 SCREEN_HEIGHT = 560
@@ -33,7 +36,17 @@ lista_img = [
     pygame.image.load('.\\flechas\\flechab.png').convert_alpha(),
     pygame.image.load('.\\flechas\\flechac.png').convert_alpha()
 ]
-lista_personagem1 = ['desenho.png','desenho2.png' ]
+
+lista_personagem1 = [
+    '.\\imagens\\mcvovozona1.png',
+    '.\\imagens\\mcvovozona2.png',
+    '.\\imagens\\mcvovozona3.png',
+    '.\\imagens\\mcvovozona4.png',
+    '.\\imagens\\mcvovozona5.png',
+    '.\\imagens\\mcvovozona6.png'
+]
+
+
 conta_tempo_pers = 0
 conta_desenho_pers = 0
 
@@ -66,7 +79,7 @@ def text_objects(text, font):
 def button (msg, x,y,w,h,ic,ac, action=None):  #largura, altura, cor inativa e ativa
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    print (click)
+    #print (click)
     #print(mouse)
 
 
@@ -104,7 +117,7 @@ for i in range(n_flechas):
 
 pygame.display.set_caption('Tumbalatum Dance')
 #pygame.mixer.music.load('Shape_of_You.wav')
-pygame.mixer.music.load('.\\musicas\\Rihanna.wav') 
+pygame.mixer.music.load('.\\musicas\\Explosao.wav') 
 pygame.mixer.music.play(0) #toca
 
 clock = pygame.time.Clock()
@@ -114,7 +127,7 @@ for filename in lista_personagem1:
     novo_personagem = pygame.image.load(filename).convert_alpha()
     personagens.append(novo_personagem)
 
-personagem_position = [200,50]
+personagem_position = [375,75]
 
 speed = 10
 
@@ -122,6 +135,7 @@ speed = 10
 while True:
     tecla = None
     for event in pygame.event.get():
+        #print(event)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT or \
                event.key == pygame.K_LEFT or \
@@ -134,8 +148,7 @@ while True:
 
     screen.blit(background, (0,0))
     message_to_screen ("{0}".format(score), white)
-    
-
+       
     for i in range(len(flechas_position)):
         flechas_position[i][0] += speed
 
