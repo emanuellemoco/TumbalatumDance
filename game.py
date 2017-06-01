@@ -158,7 +158,11 @@ letras[K_w]='w'
 letras[K_x]='x'
 letras[K_y]='y'
 letras[K_z]='z'
-############
+##############################
+
+
+############################
+
 
 def message_to_screen(msg, color, msg_pos_x, msg_pos_y):
 	screen_text = font.render(msg, True, color)
@@ -195,7 +199,24 @@ def button (msg, x,y,w,h,ic,ac):  #largura, altura, cor inativa e ativa
 def cria_ranking (dicionario):
 	nome = dicionario[0]
 	score = dicionario [nome]
-	
+
+def inicia_posicao_flechas(n_flechas, lista_img, posicao_y):
+	flechas = []
+	flechas_position = []
+	flechas_tipo = []
+
+	for i in range(n_flechas):
+		# Escolhe imagem aleatoria de flecha e poe na lista de imagens de flechas
+		k = randint(0,3)
+		img_flecha = lista_img[k]
+		flechas.append(img_flecha)
+
+		# Monta a posicao da flecha nova.
+		flechas_position.append([0 - 200*i, posicao_y])
+		# Guarda tambem o tipo de flecha
+		flechas_tipo.append(k)
+
+	return (flechas, flechas_position, flechas_tipo)
 
 
 #MUSICA DA TELA INICIAL
@@ -224,26 +245,32 @@ conta_desenho_pers = 0
 posicao_y = 460 
 posicao_x = 0 
 
-flechas = []
-flechas_position = []
-flechas_tipo = []
+
 
 n_flechas = 600
 
 score = 0
 novo_score = 0 
 
-for i in range(n_flechas):
-	# Escolhe imagem aleatoria de flecha e poe na lista de imagens de flechas
-	k = randint(0,3)
-	img_flecha = lista_img[k]
-	flechas.append(img_flecha)
+flechas, flechas_position, flechas_tipo = inicia_posicao_flechas(n_flechas, lista_img, posicao_y)
 
-	# Monta a posicao da flecha nova.
-	flechas_position.append([0 - 200*i, posicao_y])
-	# Guarda tambem o tipo de flecha
-	flechas_tipo.append(k)
+# flechas = []
+# flechas_position = []
+# flechas_tipo = []
+# for i in range(n_flechas):
+# 	# Escolhe imagem aleatoria de flecha e poe na lista de imagens de flechas
+# 	k = randint(0,3)
+# 	img_flecha = lista_img[k]
+# 	flechas.append(img_flecha)
 
+# 	# Monta a posicao da flecha nova.
+# 	flechas_position.append([0 - 200*i, posicao_y])
+# 	# Guarda tambem o tipo de flecha
+# 	flechas_tipo.append(k)
+
+
+contador_acertos = 0
+contador_tempo = 0
 comecou_musica_jogo = False
 comecou_musica_gameover = False
 contador = 0
@@ -266,15 +293,35 @@ while True:
 		#print(event)
 		if event.type == QUIT:
 			exit()
-		
-		if not event in pygame.event.get():
-			contador +=1 
-			#print (contador)
-			if contador % 5 == 0:
-				score = -10
-				if score <= 0:
-					score = 0
-					break
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_RIGHT or \
+			   event.key == pygame.K_LEFT or \
+			   event.key == pygame.K_UP or \
+			   event.key == pygame.K_DOWN:
+				tecla = event.key
+			contador = 0
+############# COMENTÁRIO SE NAO TIVER JOYSTICK
+		if event.type == pygame.JOYBUTTONDOWN:
+			if event.button == 3:
+				tecla = pygame.K_RIGHT
+			if event.button == 0:
+				tecla = pygame.K_LEFT
+			if event.button == 2:
+				tecla = pygame.K_UP
+			if event.button == 1:
+				tecla = pygame.K_DOWN
+			contador = 0
+##################
+		if event.type == pygame.USEREVENT:   #acaba o jogo quando a musica termina
+			tela = "fim_jogo"
+			print('kbo')
+
+		if event.type == QUIT:
+			exit()
+
+###
+
+
 
 	if tela == "inicial":
 		screen.blit(background_inicial, (0,0))
@@ -297,13 +344,13 @@ while True:
 	elif tela == "info":
 		screen.blit(background_infos, (0,0))
 		#para desenhar o botão com uma def
-		# botao_voltar_clicado = button ("Voltar", 825, 500, 100, 50, pink, bright_pink)
-		# if botao_voltar_clicado:
-		# 	tela = "inicial"
-		# 	screen.blit(background_inicial, (0,0))
+		botao_voltar_clicado = button ("Voltar", 825, 500, 100, 50, pink, bright_pink)
+		if botao_voltar_clicado:
+			tela = "inicial"
+			screen.blit(background_inicial, (0,0))
 
-		tela = "fim_jogo"
-
+		#para testar a tela fim de jogo
+		#tela = "fim_jogo"
 
 
 	elif tela == "about":
@@ -393,20 +440,18 @@ while True:
 		botao_rihanna_clicado = button ("Rihanna", 600, 420, 115, 50, red, bright_red)
 		botao_voltar3_clicado = button ("Voltar", 825, 500, 100, 50, pink, bright_pink)
 
+		if botao_ed_clicado or botao_despacito_clicado or botao_kevinho_clicado or botao_rihanna_clicado or botao_voltar3_clicado:
+			tela = "jogo"
+			flechas, flechas_position, flechas_tipo = inicia_posicao_flechas(n_flechas, lista_img, posicao_y)
 
-		if botao_ed_clicado:
-			musica = som_opcao4
-			tela = "jogo"
-
-		elif botao_despacito_clicado:
-			musica = som_opcao2
-			tela = "jogo"
-		elif botao_kevinho_clicado:
-			musica = som_opcao1
-			tela = "jogo"
-		elif botao_rihanna_clicado:
-			musica = som_opcao3
-			tela = "jogo"
+			if botao_ed_clicado:
+				musica = som_opcao4
+			elif botao_despacito_clicado:
+				musica = som_opcao2
+			elif botao_kevinho_clicado:
+				musica = som_opcao1
+			elif botao_rihanna_clicado:
+				musica = som_opcao3
 
 		elif botao_voltar3_clicado:
 			tela = "personagem"
@@ -414,23 +459,12 @@ while True:
 
 
 	elif tela == "jogo":
+		contador += 1
+		#print (contador)
+
+		#comentei aqui
 		pygame.display.update()
 		#pygame.mixer.music.stop()
-
-		# for event in pygame.event.get():
-		# 	#print(event)
-		# 	if event.type == QUIT:
-		# 		exit()
-			
-		# 	if not event in pygame.event.get():
-		# 		contador +=1 
-		# 		print (contador)
-		# 		if contador % 5 == 0:
-		# 			score = -10
-		# 			if score <= 0:
-		# 				score = 0
-		# 				break
-
 
 		#amem japa
 		if not comecou_musica_jogo:
@@ -441,7 +475,6 @@ while True:
 			#print("Voce escolheu a musica {0}".format(musica))
 
 		screen.blit(background_pista, (0,0))        
-		
 
 		personagens = []
 		for filename in personagem:
@@ -450,35 +483,15 @@ while True:
 
 		personagem_position = [375,75]
 
-		tecla = None
-	   
-		for event in pygame.event.get():
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_RIGHT or \
-				   event.key == pygame.K_LEFT or \
-				   event.key == pygame.K_UP or \
-				   event.key == pygame.K_DOWN:
-					tecla = event.key
-			# if event.type == pygame.JOYBUTTONDOWN:
-			# 	if event.button == 3:
-			# 		tecla = pygame.K_RIGHT
-			# 	if event.button == 0:
-			# 		tecla = pygame.K_LEFT
-			# 	if event.button == 2:
-			# 		tecla = pygame.K_UP
-			# 	if event.button == 1:
-			# 		tecla = pygame.K_DOWN
-
-			if event.type == pygame.USEREVENT:   #acaba o jogo quando a musica termina
-				tela = "fim_jogo"
-				print('kbo')
-
-			if event.type == QUIT:
-				exit()
-
 		screen.blit(background_pista, (0,0))
 		message_to_screen ("{0}".format(score), white, 800, 50)
-		   
+
+		if contador > 400:
+			print ("MAIOR")
+			score = 0
+			novo_score = 0
+			tela = "game_over"
+		    
 		for i in range(len(flechas_position)):
 			flechas_position[i][0] += velocidade
 
@@ -499,6 +512,8 @@ while True:
 						score+=100
 						print(score)
 						screen.blit(quadrado_rosa, (735,455))
+						contador_acertos += 1
+						print(contador_acertos)
 						#effect_correct.play()
 
 					elif pos_x > 720 and pos_x < 780:
@@ -506,6 +521,8 @@ while True:
 						score+=70
 						print(score)
 						screen.blit(quadrado_rosa, (735,455))
+						contador_acertos += 1
+						print(contador_acertos)
 						#effect_correct.play()
 
 					else:
@@ -513,6 +530,8 @@ while True:
 						score+=50
 						print(score)
 						screen.blit(quadrado_rosa, (735,455))
+						contador_acertos += 1
+						print(contador_acertos)
 						#effect_correct.play()
 
 					conta_desenho_pers = (conta_desenho_pers + 1) % len(personagens)
@@ -520,20 +539,31 @@ while True:
 					print("Errou!")
 					score -= 30
 					novo_score -=30
+					print (novo_score)
 					if score < 0: #para o score nao ficar negativo
 						score = 0
 						print(novo_score)
 						if novo_score < -120:
 							tela = "game_over" 
 							print("deu game")
+					contador_acertos = 0
+					print (contador_acertos)
 					#effect_wrong.play()
-			# elif pos_x < 700 or pos_x > 800:
-			# 	if tecla == pygame.K_RIGHT or\
-			# 	tecla == pygame.K_LEFT or\
-			# 	tecla == pygame.K_UP or\
-			# 	tecla == pygame.K_DOWN:
-			# 		score -= 30/600
-			# 		print (score)
+
+					#para aparecer perfect
+				if contador_acertos >= 5 :
+					print ("muito bem!")
+					contador_acertos = 0
+					contador_tempo += 1
+					print ("contador_tempo: {0}".format(contador_tempo))
+					# while contador_tempo <= 10:
+					# 	#trava o jogo quando entra nisso aqui
+					# 	print ("AAAAA")
+					screen.blit(img_perfect, (730,400))
+					if contador_tempo > 10:
+						contador_tempo = 0 
+						#screen.blit(img_perfect, (720,400))
+
 
 		screen.blit(personagens[conta_desenho_pers], personagem_position)
 
