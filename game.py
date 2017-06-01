@@ -70,6 +70,7 @@ quadrado_rosa = pygame.image.load('.\\imagens\\quadrado2.png').convert_alpha()
 
 
 
+
 conta_tempo_pers = 0
 conta_desenho_pers = 0
 
@@ -93,36 +94,36 @@ lista_personagem1 = [
 		'.\\imagens\\mcvovozona1.png',
 		'.\\imagens\\mcvovozona2.png',
 		'.\\imagens\\mcvovozona3.png',
-		'.\\imagens\\mcvovozona4.png'
-		# '.\\imagens\\mcvovozona5.png',
-		# '.\\imagens\\mcvovozona6.png'
+		'.\\imagens\\mcvovozona4.png',
+		'.\\imagens\\mcvovozona5.png',
+		'.\\imagens\\mcvovozona6.png'
 	]
 
 lista_personagem2 = [
 		'.\\imagens\\robocop1.png',
 		'.\\imagens\\robocop2.png',
 		'.\\imagens\\robocop3.png',
-		'.\\imagens\\robocop4.png'
-		# '.\\imagens\\robocop5.png',
-		# '.\\imagens\\robocop6.png'
+		'.\\imagens\\robocop4.png',
+		'.\\imagens\\robocop5.png',
+		'.\\imagens\\robocop6.png'
 	]
 
 lista_personagem3 = [
 		'.\\imagens\\estranha1.png',
 		'.\\imagens\\estranha2.png',
 		'.\\imagens\\estranha3.png',
-		'.\\imagens\\estranha4.png'
-		#'.\\imagens\\estranha5.png',
-		#'.\\imagens\\estranha6.png'
+		'.\\imagens\\estranha4.png',
+		'.\\imagens\\estranha5.png',
+		'.\\imagens\\estranha6.png'
 	]
 
 lista_personagem4 = [
 		'.\\imagens\\estranho1.png',
 		'.\\imagens\\estranho2.png',
 		'.\\imagens\\estranho3.png',
-		'.\\imagens\\estranho4.png'
-		#'.\\imagens\\estranho5.png',
-		#'.\\imagens\\estranho6.png'
+		'.\\imagens\\estranho4.png',
+		'.\\imagens\\estranho5.png',
+		'.\\imagens\\estranho6.png'
 	]
 
 velocidade_easy = 5
@@ -131,6 +132,7 @@ velocidade_hard = 18
 
 
 ##########
+#código compartilhado com o grupo da manoela 
 letras={}
 letras[K_a]='a'
 letras[K_b]='b'
@@ -160,6 +162,42 @@ letras[K_y]='y'
 letras[K_z]='z'
 ##############################
 
+#amém manu 
+########codigo compartilhado com o grupo da manoela
+with open('highscore.json','r') as arquivo:
+	dados = json.load(arquivo)
+
+myfont2 = pygame.font.SysFont('Lucida Console', 25)
+
+#myfont2 = pygame.font.Font('Cosmos.otf', 45)
+
+#função que salva o jogo que o jogador iniciou(personagens e insperdex)
+def save(dadossalvo):
+	with open('highscore.json','w') as dados_salvos:
+		dados_salvos.writelines(json.dumps(dados))
+
+def organizadados(dados):
+	highscore = sorted(dados.items(), key=lambda x: x[1], reverse=True)
+	dadosorg = []
+	for y, z in highscore:
+		pontos = myfont2.render('{0} : {1}'.format(y,z) , False, (255,255,255))
+		dadosorg.append(pontos)
+	print(dadosorg)
+	return dadosorg
+
+def lerpontos(dadosorg,screen):
+	pos_x = 270
+	pos_x2 = 575
+	screen.blit(dadosorg[0],(pos_x,253))
+	screen.blit(dadosorg[1],(pos_x,313))
+	screen.blit(dadosorg[2],(pos_x,376))
+	screen.blit(dadosorg[3],(pos_x,433))
+	screen.blit(dadosorg[4],(pos_x,496))
+	screen.blit(dadosorg[5],(pos_x2,253))
+	screen.blit(dadosorg[6],(pos_x2,313))
+	screen.blit(dadosorg[7],(pos_x2,376))
+	screen.blit(dadosorg[8],(pos_x2,433))
+	screen.blit(dadosorg[9],(pos_x2,496))
 
 ############################
 
@@ -251,22 +289,10 @@ n_flechas = 600
 
 score = 0
 novo_score = 0 
+novo_score1 = 0 
+novo_score_erro = 0
 
 flechas, flechas_position, flechas_tipo = inicia_posicao_flechas(n_flechas, lista_img, posicao_y)
-
-# flechas = []
-# flechas_position = []
-# flechas_tipo = []
-# for i in range(n_flechas):
-# 	# Escolhe imagem aleatoria de flecha e poe na lista de imagens de flechas
-# 	k = randint(0,3)
-# 	img_flecha = lista_img[k]
-# 	flechas.append(img_flecha)
-
-# 	# Monta a posicao da flecha nova.
-# 	flechas_position.append([0 - 200*i, posicao_y])
-# 	# Guarda tambem o tipo de flecha
-# 	flechas_tipo.append(k)
 
 
 contador_acertos = 0
@@ -277,16 +303,15 @@ contador = 0
 nome = ""
 pause = False
 
-# ranking = {}
-# with open('ranking.json') as arquivo:
-#  	arquivo_ranking = ranking.json.load(arquivo)
-
-# with open ('ranking.json', 'w') as arquivo:
-# 	jason.dump(arquivo_ranking, arquivo)
-
+dadosorg = organizadados(dados)
 
 while True:
+	print ("Score: {0}".format(score))
+	print ("Novo score: {0}".format(novo_score))
+	print ("Novo score1: {0}".format(novo_score1))
+	print ("Score erro: {0}".format(novo_score_erro))
 	tecla = None
+
 
 
 	for event in pygame.event.get():
@@ -314,6 +339,7 @@ while True:
 ##################
 		if event.type == pygame.USEREVENT:   #acaba o jogo quando a musica termina
 			tela = "fim_jogo"
+			novo_score = 0
 			print('kbo')
 
 		if event.type == QUIT:
@@ -324,8 +350,11 @@ while True:
 
 
 	if tela == "inicial":
+		score = 0
+		novo_score = 0
 		screen.blit(background_inicial, (0,0))
-
+		comecou_musica_gameover = False
+		comecou_musica_jogo = False
 		#para desenhar o botão com uma def
 		botao_play_clicado = button ("Play", 150, 180, 110, 50, green, bright_green)
 		botao_info_clicado = button ("Infos", 150, 280, 110, 50, red, bright_red)
@@ -340,6 +369,7 @@ while True:
 			tela = "about"
 		elif botao_highscore_clicado:
 			tela = "highscore"
+			comecou_musica_jogo = False
 
 	elif tela == "info":
 		screen.blit(background_infos, (0,0))
@@ -368,8 +398,14 @@ while True:
 
 
 	elif tela == "highscore":
-
 		screen.blit(background_highscore, (0,0))
+
+		dadosorg = organizadados(dados)
+		lerpontos(dadosorg,screen)
+		# pygame.display.update()
+		# clock.tick(30)
+
+
 
 		botao_voltar_clicado = button ("Voltar", 845, 500, 100, 50, pink, bright_pink)
 		if botao_voltar_clicado:
@@ -486,11 +522,16 @@ while True:
 		screen.blit(background_pista, (0,0))
 		message_to_screen ("{0}".format(score), white, 800, 50)
 
-		if contador > 400:
-			print ("MAIOR")
-			score = 0
-			novo_score = 0
-			tela = "game_over"
+		if contador > 350:
+			score -=30
+			novo_score1 -= 30
+			if score < 0:
+				score = 0
+			if novo_score1 < -10000:
+				tela = "game_over"
+				comecou_musica_jogo = False
+				score = 0
+				novo_score1 = 0
 		    
 		for i in range(len(flechas_position)):
 			flechas_position[i][0] += velocidade
@@ -538,14 +579,16 @@ while True:
 				elif tecla != None:
 					print("Errou!")
 					score -= 30
-					novo_score -=30
-					print (novo_score)
+					novo_score_erro -=30
+					print (novo_score_erro)
 					if score < 0: #para o score nao ficar negativo
 						score = 0
-						print(novo_score)
-						if novo_score < -120:
+						print(novo_score_erro)
+						if novo_score_erro < -120:
 							tela = "game_over" 
 							print("deu game")
+							score = 0
+							novo_score_erro = 0
 					contador_acertos = 0
 					print (contador_acertos)
 					#effect_wrong.play()
@@ -559,10 +602,12 @@ while True:
 					# while contador_tempo <= 10:
 					# 	#trava o jogo quando entra nisso aqui
 					# 	print ("AAAAA")
-					screen.blit(img_perfect, (730,400))
+					#screen.blit(img_perfect, (730,400))
 					if contador_tempo > 10:
 						contador_tempo = 0 
 						#screen.blit(img_perfect, (720,400))
+
+
 
 
 		screen.blit(personagens[conta_desenho_pers], personagem_position)
@@ -578,11 +623,10 @@ while True:
 				  print("STOP")
 				  pause = True
 				  time.sleep(0.1)
-				  #TEM QUE PARAR A TELA INTEIRA
 
 ###########################
 
-		while pause == True: # pausa se der errado aqui está 
+		while pause == True: # pausa
 			for event in pygame.event.get():
 				if event.type == QUIT:
 					exit()
@@ -598,9 +642,14 @@ while True:
 		if botao_reiniciar_clicado:
 			pygame.display.update()
 			tela = "jogo"
-			pygame.display.update()
 			score = 0
-			#erro, tem que fazer reiniciar o jogo
+			novo_score = 0
+			flechas, flechas_position, flechas_tipo = inicia_posicao_flechas(n_flechas, lista_img, posicao_y)
+			pygame.mixer.music.load(musica) 
+			pygame.mixer.music.set_endevent(pygame.USEREVENT)
+			pygame.mixer.music.play(0)
+			comecou_musica_jogo = True
+			#erro, tem que fazer reiniciar a musica do jogo
 		elif botao_voltar4_clicado:
 			pygame.display.update()
 			tela = "musica" 
@@ -614,11 +663,13 @@ while True:
 			score = 0
 			pygame.mixer.music.load('.\\musicas\\Tumbalatum.wav') 
 			pygame.mixer.music.play(-1) #toca
-
 	elif tela == "game_over":
 		#print("Voce escolheu a velocudade {0}".format(velocidade))
 		screen.blit(background_gameover, (0,0))
-		
+		score = 0
+		novo_score = 0
+		contador_acertos = 0 
+
 		if not comecou_musica_gameover:
 			pygame.mixer.music.load('.\\musicas\\gameover.wav')
 			pygame.mixer.music.play(-1)
@@ -635,12 +686,18 @@ while True:
 	elif tela == "fim_jogo":
 		#print("Voce escolheu a velocudade {0}".format(velocidade))
 		screen.blit(background_fim_jogo, (0,0))
+		score = 0
+		novo_score = 0
 
 		if event.type == pygame.KEYDOWN:
 			if event.key in letras:
 				letra=letras[event.key]
 				nome+=letra
-				#time.sleep(0.15) 
+				time.sleep(0.15) 
+			# if event.key == pygame.K_RETURN:
+			# 	dados[nome] = score
+			# 	save(dados)
+			# 	tela = "inicial"
 
 		message_to_screen ("{0}".format(nome), white, 440, 470)
 							   
@@ -656,8 +713,10 @@ while True:
 			pygame.mixer.music.play(-1) #toca
 
 		elif botao_inserir_clicado:
-			ranking[nome] = [score]
-			print (ranking)
+			dados[nome] = score
+			save(dados)
+			tela = "inicial"
+
 			tela = "inicial"
 			pygame.mixer.music.load('.\\musicas\\Tumbalatum.wav') 
 			pygame.mixer.music.play(-1) #toca
