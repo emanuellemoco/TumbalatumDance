@@ -248,6 +248,7 @@ comecou_musica_jogo = False
 comecou_musica_gameover = False
 contador = 0
 nome = ""
+pause = False
 
 # ranking = {}
 # with open('ranking.json') as arquivo:
@@ -255,8 +256,6 @@ nome = ""
 
 # with open ('ranking.json', 'w') as arquivo:
 # 	jason.dump(arquivo_ranking, arquivo)
-
-
 
 
 while True:
@@ -322,6 +321,7 @@ while True:
 
 
 	elif tela == "highscore":
+
 		screen.blit(background_highscore, (0,0))
 
 		botao_voltar_clicado = button ("Voltar", 845, 500, 100, 50, pink, bright_pink)
@@ -546,12 +546,24 @@ while True:
 				  pygame.mixer.music.pause()
 
 				  print("STOP")
+				  pause = True
+				  time.sleep(0.1)
 				  #TEM QUE PARAR A TELA INTEIRA
 
-			  if event.key == pygame.K_RETURN: #apertar a tecla enter, volta o jogo
-				  pygame.mixer.music.unpause()
-				  print ("play")
+###########################
 
+		while pause == True: # pausa se der errado aqui está 
+			for event in pygame.event.get():
+				if event.type == QUIT:
+					exit()
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_SPACE:
+						pause = False
+						time.sleep(0.1)
+						pygame.mixer.music.unpause()
+
+
+#############################
 
 		if botao_reiniciar_clicado:
 			pygame.display.update()
