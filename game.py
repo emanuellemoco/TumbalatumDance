@@ -86,43 +86,11 @@ while True:
         if flechas_position[i][0] > -100 and flechas_position[i][0] < SCREEN_WIDTH:
             screen.blit(flechas[i], flechas_position[i])
 
-    # flecha0_position[0] += speed #mudando a posição com o tempo(horizontal)
-    # flecha1_position[0] += speed
-    # flecha2_position[0] += speed
-    # flecha3_position[0] += speed
-    # flecha4_position[0] += speed
-    # flecha5_position[0] += speed
 
-    # flecha0 = lista_img[n]
-    # flecha1 = lista_img[i]
-    # flecha2 = lista_img[a]
-    # flecha3 = lista_img[b]
-    # flecha4 = lista_img[c]
-    # flecha5 = lista_img[d]
-
-
-    # screen.blit(flecha0, flecha0_position) #precisa disso pra nave ficar sobre a tela de fundo e posicionamento
-    # screen.blit(flecha1, flecha1_position)
-    # screen.blit(flecha2, flecha2_position)
-    # screen.blit(flecha3, flecha3_position)
-    # screen.blit(flecha4, flecha4_position)
-    # screen.blit(flecha5, flecha5_position)
 
     screen.blit(personagem0, personagem0_position)
     screen.blit(personagem1, personagem0_position)
 
     pygame.display.update()
     time_passed = clock.tick(30)
-    # if flecha0_position[0] >= 2000:
-    #     i = randint(0,3)
-    #     n = randint(0,3)
-    #     a = randint(0,3)
-    #     b  = randint(0,3)
-    #     c = randint(0,3)
-    #     d = randint(0,3)
-    #     flecha0_position[0] = 0
-    #     flecha1_position[0] = -200
-    #     flecha2_position[0] = -400
-    #     flecha3_position[0] = -600
-    #     flecha4_position[0] = -800
-    #     flecha5_position[0] = -1000
+
