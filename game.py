@@ -26,12 +26,16 @@ SCREEN_HEIGHT = 560
 
 pygame.init()
 pygame.joystick.init()
-######### SE TIVER JOYSTICK
+# ######### SE TIVER JOYSTICK
 # joystick = pygame.joystick.Joystick(0)
 # joystick.init()
 ###########
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32) #configurações tela
+
+#para ficar a tela cheia
+#tela1111 = pygame.display.set_mode((956,560),pygame.FULLSCREEN) 
+
 
 #CARREGANDO AS IMAGENS DE FUNDO
 #adicionando imagem de fundo e mudando a configuração 956,560 tamanho img
@@ -66,6 +70,10 @@ background_filename = '.\\imagens\\imagem_highscore.png'
 background_highscore = pygame.image.load(background_filename).convert()
 
 quadrado_rosa = pygame.image.load('.\\imagens\\quadrado2.png').convert_alpha()
+img_perfect = pygame.image.load('.\\imagens\\img_perfect.png').convert_alpha()
+img_bad = pygame.image.load('.\\imagens\\img_bad.png').convert_alpha()
+
+
 
 conta_tempo_pers = 0
 conta_desenho_pers = 0
@@ -76,15 +84,11 @@ posicao_x = 0
 font = pygame.font.SysFont(None, 25)
 smallText = pygame.font.Font("freesansbold.ttf",20)
 
-#opções de musica para o jogo
-som_opcao1 = ('.\\musicas\\Explosao.wav') 
-som_opcao2 = ('.\\musicas\\Despacito.wav') 
-som_opcao3 = ('.\\musicas\\Rihanna.wav') 
-som_opcao4 = ('.\\musicas\\Musica_teste.wav')  #musica para teste com 10 segundos
-#som_opcao4 = ('.\\musicas\\Shape_of_You.wav')  
-
-effect_wrong = pygame.mixer.Sound('.\\musicas\\sound_wrong.wav')
-effect_correct = pygame.mixer.Sound('.\\musicas\\teste.wav')
+#MUSICAS COM MENOS TEMPO
+som_opcao1 = ('.\\musicas\\Explosao2.wav') 
+som_opcao2 = ('.\\musicas\\Despacito2.wav') 
+som_opcao3 = ('.\\musicas\\Rihanna2.wav') 
+som_opcao4 = ('.\\musicas\\Shape_of_You2.wav')  
 
 lista_personagem1 = [
 		'.\\imagens\\mcvovozona1.png',
@@ -123,8 +127,8 @@ lista_personagem4 = [
 	]
 
 velocidade_easy = 5
-velocidade_medium = 13
-velocidade_hard = 18
+velocidade_medium = 9
+velocidade_hard = 13
 
 ##########
 #código compartilhado com o grupo da manoela 
@@ -196,7 +200,6 @@ def lerpontos(dadosorg,screen):
 	screen.blit(dadosorg[9],(pos_x2,496))
 
 ############################
-
 def message_to_screen(msg, color, msg_pos_x, msg_pos_y):
 	screen_text = font.render(msg, True, color)
 	screen.blit(screen_text, [msg_pos_x, msg_pos_y])
@@ -249,7 +252,6 @@ def inicia_posicao_flechas(n_flechas, lista_img, posicao_y):
 
 	return (flechas, flechas_position, flechas_tipo)
 
-
 #MUSICA DA TELA INICIAL
 pygame.display.set_caption('Tumbalatum Dance')
 
@@ -285,34 +287,40 @@ novo_score_erro = 0
 flechas, flechas_position, flechas_tipo = inicia_posicao_flechas(n_flechas, lista_img, posicao_y)
 
 contador_acertos = 0
+contador_erros = 0
+contador_bad = 0
+mostrando_perf = False
+mostrando_bad = False
 contador_tempo = 0
+contador_tempo_erro = 0
 comecou_musica_jogo = False
 comecou_musica_gameover = False
 contador = 0
+score_seta_fora = 0
+
 nome = ""
 pause = False
 
 dadosorg = organizadados(dados)
-
-while True:
-	print ("Score: {0}".format(score))
-	print ("Novo score: {0}".format(novo_score))
-	print ("Novo score1: {0}".format(novo_score1))
-	print ("Score erro: {0}".format(novo_score_erro))
+jogo = True
+while jogo:
 	tecla = None
 
 	for event in pygame.event.get():
-		#print(event)
+		print(event)
 		if event.type == QUIT:
 			exit()
+
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RIGHT or \
 			   event.key == pygame.K_LEFT or \
 			   event.key == pygame.K_UP or \
 			   event.key == pygame.K_DOWN:
 				tecla = event.key
-			contador = 0
+			contador = 0	
 ############# para o joystick funcionar
+			if event.key == pygame.K_ESCAPE: #para sair quando apertar esc
+				jogo = False
 		if event.type == pygame.JOYBUTTONDOWN:
 			if event.button == 3:
 				tecla = pygame.K_RIGHT
@@ -326,7 +334,6 @@ while True:
 ##################
 		if event.type == pygame.USEREVENT:   #evento para acaba o jogo quando a musica termina
 			tela = "fim_jogo"
-			novo_score = 0
 			print('kbo')
 
 		if event.type == QUIT:
@@ -388,7 +395,6 @@ while True:
 		pygame.display.update()
 		screen.blit(background_nivel, (0,0))
 
-
 		#para desenhar o botão com uma def
 		botao_easy_clicado = button ("Easy", 150, 250, 100, 50, green, bright_green)
 		botao_medium_clicado = button ("Medium", 150, 350, 100, 50, yellow, bright_yellow)
@@ -408,7 +414,6 @@ while True:
 			tela = "inicial"
 		pygame.display.update()
 		time_passed = clock.tick(30) 
-
 
 	elif tela == "personagem":
 		pygame.display.update()
@@ -434,8 +439,6 @@ while True:
 		elif botao_voltar2_clicado:
 			tela = "level"      
 			screen.blit(background_nivel, (0,0))
-
-
 
 	elif tela == "musica":
 		screen.blit(background_som, (0,0))
@@ -465,8 +468,6 @@ while True:
 
 	elif tela == "jogo":
 		contador += 1
-		#print (contador)
-
 		pygame.display.update()
 
 		#amem japa
@@ -493,12 +494,14 @@ while True:
 			novo_score1 -= 30
 			if score < 0:
 				score = 0
-			if novo_score1 < -10000:
+			if novo_score1 < -500:
 				tela = "game_over"
 				comecou_musica_jogo = False
 				score = 0
 				novo_score1 = 0
 		    
+		seta_no_quadrado = False
+
 		for i in range(len(flechas_position)):
 			flechas_position[i][0] += velocidade
 
@@ -507,6 +510,10 @@ while True:
 				screen.blit(flechas[i], flechas_position[i])
 
 			if pos_x > 700 and pos_x < 800:
+				seta_no_quadrado = True
+				score_seta_fora = 0
+				contador_erros = 0
+
 				tipo = flechas_tipo[i]
 
 				if (tipo == 0 and tecla == pygame.K_RIGHT) or \
@@ -521,7 +528,7 @@ while True:
 						screen.blit(quadrado_rosa, (735,455))
 						contador_acertos += 1
 						print(contador_acertos)
-						#effect_correct.play()
+						contador_erros = 0
 
 					elif pos_x > 720 and pos_x < 780:
 						print("Good!")
@@ -530,7 +537,7 @@ while True:
 						screen.blit(quadrado_rosa, (735,455))
 						contador_acertos += 1
 						print(contador_acertos)
-						#effect_correct.play()
+						contador_erros = 0
 
 					else:
 						print("Ok!")
@@ -539,13 +546,15 @@ while True:
 						screen.blit(quadrado_rosa, (735,455))
 						contador_acertos += 1
 						print(contador_acertos)
-						#effect_correct.play()
+						contador_erros = 0
 
 					conta_desenho_pers = (conta_desenho_pers + 1) % len(personagens)
 				elif tecla != None:
 					print("Errou!")
 					score -= 30
 					novo_score_erro -=30
+					contador_erros += 1
+					print("contador erro: {0}".format(contador_erros))
 					print (novo_score_erro)
 					if score < 0: #para o score nao ficar negativo
 						score = 0
@@ -557,23 +566,37 @@ while True:
 							novo_score_erro = 0
 					contador_acertos = 0
 					print (contador_acertos)
-					#effect_wrong.play()
 
 					#para aparecer perfect
 				if contador_acertos >= 5 :
 					print ("muito bem!")
 					contador_acertos = 0
-					contador_tempo += 1
-					print ("contador_tempo: {0}".format(contador_tempo))
-					#EERO (precisamos que o perfect apareça por mais tempo)
-					# while contador_tempo <= 10:
-					# 	#trava o jogo quando entra nisso aqui
-					# 	print ("AAAAA")
-					#screen.blit(img_perfect, (730,400))
-					# if contador_tempo > 10:
-					# 	contador_tempo = 0 
-						#screen.blit(img_perfect, (720,400))
+					mostrando_perf = True
+					contador_tempo = 0
 
+
+				if mostrando_perf:
+					screen.blit(img_perfect, (730,400))
+					contador_tempo += 1
+					if contador_tempo == 10:
+						mostrando_perf = False
+
+#amem japa2
+		if not seta_no_quadrado:
+			if tecla == pygame.K_RIGHT or \
+			   tecla == pygame.K_LEFT or \
+			   tecla == pygame.K_DOWN or \
+			   tecla == pygame.K_UP:
+			   score -= 30
+			   score_seta_fora -= 30
+			   contador_erros -= 1
+			   print ("score :{0}".format(score))
+			   print ("score seta fora: {0}".format(score_seta_fora))
+			   if score < 0:
+			   	score = 0
+			   if score_seta_fora < -180:
+			   	tela = "game_over"
+			   	score_seta_fora = 0
 
 		screen.blit(personagens[conta_desenho_pers], personagem_position)
 
@@ -643,9 +666,7 @@ while True:
 
 	elif tela == "fim_jogo":
 		screen.blit(background_fim_jogo, (0,0))
-		score = 0
 		novo_score = 0
-
 		if event.type == pygame.KEYDOWN:
 			if event.key in letras:
 				letra=letras[event.key]
@@ -666,6 +687,7 @@ while True:
 			dados[nome] = score
 			save(dados)
 			tela = "inicial"
+			nome = ""
 			pygame.mixer.music.load('.\\musicas\\Tumbalatum.wav') 
 			pygame.mixer.music.play(-1) #toca
 
